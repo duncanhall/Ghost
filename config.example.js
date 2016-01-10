@@ -6,6 +6,10 @@
 var path = require('path'),
     config;
 
+var plugins = {
+    imageProcessors: path.join(__dirname, '/content/plugins/image_processors')
+};
+
 config = {
     // ### Production
     // When running Ghost in the wild, use the production environment.
@@ -24,7 +28,9 @@ config = {
         server: {
             host: '127.0.0.1',
             port: '2368'
-        }
+        },
+
+        plugins: plugins
     },
 
     // ### Development **(default)**
@@ -69,7 +75,9 @@ config = {
         // Specify where your content directory lives
         paths: {
             contentPath: path.join(__dirname, '/content/')
-        }
+        },
+
+        plugins: plugins
     },
 
     // **Developers only need to edit below here**
@@ -89,7 +97,9 @@ config = {
             host: '127.0.0.1',
             port: '2369'
         },
-        logging: false
+        logging: false,
+
+        plugins: plugins
     },
 
     // ### Testing MySQL
