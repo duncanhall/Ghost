@@ -21,8 +21,6 @@ let UploadUi = function ($dropzone, settings) {
     $.extend(this, {
         complete: (result) => {
 
-            let url = result.url;
-
             let showImage = (width, height) => {
                 $dropzone.find('img.js-upload-target').attr({width, height}).css({display: 'block'});
                 $dropzone.find('.fileupload-loading').remove();
@@ -51,9 +49,9 @@ let UploadUi = function ($dropzone, settings) {
                     $dropzone.find('span.media').after(`<img class="fileupload-loading" src="${Ghost.subdir}/ghost/img/loadingcat.gif" />`);
                 });
                 $img.one('load', () => {
-                    $dropzone.trigger('uploadsuccess', [url]);
+                    $dropzone.trigger('uploadsuccess', [result]);
                     animateDropzone($img);
-                }).attr('src', url);
+                }).attr('src', result.url);
             };
             preLoadImage();
         },

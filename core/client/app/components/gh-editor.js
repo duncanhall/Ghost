@@ -2,6 +2,7 @@ import Ember from 'ember';
 import ShortcutsMixin from 'ghost/mixins/shortcuts';
 import imageManager from 'ghost/utils/ed-image-manager';
 import editorShortcuts from 'ghost/utils/editor-shortcuts';
+import exifFormatter from 'ghost/utils/exif-formatter';
 
 const {Component, computed, run} = Ember;
 const {equal} = computed;
@@ -62,6 +63,12 @@ export default Component.extend(ShortcutsMixin, {
         this.$previewContent = this.$('.js-rendered-markdown');
     },
 
+    _insertExif(editor, exifData) {
+        let exifString = exifFormatter(exifData);
+        let insertionPoint = editor.getValue().length;
+        editor.replaceSelection(exifString, insertionPoint);
+    },
+
     actions: {
         selectTab(tab) {
             this.set('activeTab', tab);
@@ -98,7 +105,8 @@ export default Component.extend(ShortcutsMixin, {
 
         // Match the uploaded file to a line in the editor, and update that line with a path reference
         // ensuring that everything ends up in the correct place and format.
-        handleImgUpload(e, resultSrc) {
+        handleImgUpload(e, result) {
+            let resultSrc = result.url;
             let editor = this.get('editor');
             let editorValue = editor.getValue();
             let replacement = imageManager.getSrcRange(editorValue, e.target);
@@ -110,6 +118,7 @@ export default Component.extend(ShortcutsMixin, {
                     resultSrc = `(${resultSrc})`;
                 }
                 editor.replaceSelection(resultSrc, replacement.start, replacement.end, cursorPosition);
+                this._insertExif(editor, result.meta);
             }
         },
 
