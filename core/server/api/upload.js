@@ -10,7 +10,10 @@ var config  = require('../config'),
 function imageSaver (store) {
     return function (uploadimage) {
         return store.save(uploadimage).then(function (url) {
-            return url;
+            return {
+                url: url,
+                original: uploadimage.path
+            };
         });
     }
 }
