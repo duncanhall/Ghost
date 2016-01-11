@@ -1,10 +1,16 @@
 var Promise = require('bluebird');
 
-function preProcessImage (image) {
+function postProcessImage (image) {
     return new Promise(function (resolve, reject) {
-        console.log('Pre processing image...');
-        resolve(image);
+        var data = image;
+        if (typeof image === 'string') {
+            data = {
+                url: image
+            }
+        }
+        data.meta = 'STUFF';
+        resolve(data);
     });
 }
 
-module.exports = preProcessImage;
+module.exports = postProcessImage;

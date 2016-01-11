@@ -57,8 +57,8 @@ upload = {
 
         var process = getImageProcessor(store);
 
-        return Promise.reduce(process, function(r, p) {
-            return p(r)
+        return Promise.reduce(process, function(input, next) {
+            return next(input)
         }, options.uploadimage)
             .finally(function () {
             // Remove uploaded file from tmp location
