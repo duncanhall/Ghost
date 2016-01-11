@@ -367,6 +367,8 @@ export default Mixin.create({
             let replacement = imageManager.getSrcRange(editorValue, e.target);
             let cursorPosition;
 
+            console.log('EDITOR GOT: ' + resultSrc);
+
             if (replacement) {
                 cursorPosition = replacement.start + resultSrc.length + 1;
                 if (replacement.needsParens) {

@@ -7,6 +7,24 @@ var config  = require('../config'),
 
     upload;
 
+function imageSaver (store) {
+    return function (uploadimage) {
+        return store.save(uploadimage).then(function (url) {
+            return url;
+        });
+    }
+}
+
+function getImageProcessor (store) {
+    var saveImage = imageSaver(store);
+
+    if (config.plugins && config.plugins.imageProcessors) {
+        return require(config.plugins.imageProcessors).process(saveImage);
+    } else {
+        return [saveImage];
+    }
+}
+
 /**
  * ## Upload API Methods
  *
@@ -37,9 +55,12 @@ upload = {
 
         filepath = options.uploadimage.path;
 
-        return store.save(options.uploadimage).then(function (url) {
-            return url;
-        }).finally(function () {
+        var process = getImageProcessor(store);
+
+        return Promise.reduce(process, function(r, p) {
+            return p(r)
+        }, options.uploadimage)
+            .finally(function () {
             // Remove uploaded file from tmp location
             return Promise.promisify(fs.unlink)(filepath);
         });
