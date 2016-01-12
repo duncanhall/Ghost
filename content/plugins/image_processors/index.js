@@ -1,5 +1,5 @@
 
-var preProcess = [require('./preprocess')],
+var preProcess = [],
     postProcess = [require('./postprocess')],
     processor;
 

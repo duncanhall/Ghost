@@ -10,7 +10,10 @@ var config  = require('../config'),
 function imageSaver (store) {
     return function (uploadimage) {
         return store.save(uploadimage).then(function (url) {
-            return url;
+            return {
+                url: url,
+                original: uploadimage.path
+            };
         });
     }
 }
@@ -61,9 +64,9 @@ upload = {
             return next(input)
         }, options.uploadimage)
             .finally(function () {
-            // Remove uploaded file from tmp location
-            return Promise.promisify(fs.unlink)(filepath);
-        });
+                // Remove uploaded file from tmp location
+                return Promise.promisify(fs.unlink)(filepath);
+            });
     }
 };
 

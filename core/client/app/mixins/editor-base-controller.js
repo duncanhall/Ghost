@@ -2,6 +2,7 @@ import Ember from 'ember';
 import PostModel from 'ghost/models/post';
 import boundOneWay from 'ghost/utils/bound-one-way';
 import imageManager from 'ghost/utils/ed-image-manager';
+import exifFormatter from 'ghost/utils/exif-formatter';
 
 const {Mixin, RSVP, computed, inject, observer, run} = Ember;
 const {alias} = computed;
@@ -249,6 +250,12 @@ export default Mixin.create({
         notifications.showAlert(message, {type: 'error', delayed: delay, key: 'post.save'});
     },
 
+    _insertExif(editor, exifData) {
+        let exifString = exifFormatter(exifData);
+        let insertionPoint = editor.getValue().length;
+        editor.replaceSelection(exifString, insertionPoint);
+    },
+
     actions: {
         save(options) {
             let status;
@@ -361,7 +368,8 @@ export default Mixin.create({
 
         // Match the uploaded file to a line in the editor, and update that line with a path reference
         // ensuring that everything ends up in the correct place and format.
-        handleImgUpload(e, resultSrc) {
+        handleImgUpload(e, result) {
+            let resultSrc = result.url;
             let editor = this.get('editor');
             let editorValue = editor.getValue();
             let replacement = imageManager.getSrcRange(editorValue, e.target);
@@ -373,6 +381,7 @@ export default Mixin.create({
                     resultSrc = `(${resultSrc})`;
                 }
                 editor.replaceSelection(resultSrc, replacement.start, replacement.end, cursorPosition);
+                this._insertExif(editor, result.meta);
             }
         },
 
