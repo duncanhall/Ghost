@@ -42,11 +42,21 @@ function getExifTable (exif, lat, long, date, isPortrait) {
 </table>`;
 }
 
-export default function formatExifForOutput (exif, isPortrait) {
+export function formatExifForOutput (exif, isPortrait) {
     let latitude = formatDegreesMinutesSeconds(exif.gps.GPSLatitude, exif.gps.GPSLatitudeRef);
     let longitude = formatDegreesMinutesSeconds(exif.gps.GPSLongitude, exif.gps.GPSLongitudeRef);
     let date = formatTimestamp(exif.exif.DateTimeOriginal);
     return getExifTable(exif, latitude, longitude, date, isPortrait);
 }
 
+export function getGetDecimalLocation (gps) {
+    var gpsLat = gps.GPSLatitude;
+    var gpsLong = gps.GPSLongitude;
+    let lat = (gpsLat[0] + gpsLat[1] / 60 + gpsLat[2] / 3600).toFixed(6);
+    let long = (gpsLong[0] + gpsLong[1] / 60 + gpsLong[2] / 3600).toFixed(6);
 
+    lat *= gps.GPSLatitudeRef.toLowerCase() === 'n' ? 1 : -1;
+    long *= gps.GPSLongitudeRef.toLowerCase() === 'e' ? 1 : -1;
+
+    return `${lat}|${long}`;
+}

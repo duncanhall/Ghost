@@ -2,9 +2,9 @@ import Ember from 'ember';
 import PostModel from 'ghost/models/post';
 import boundOneWay from 'ghost/utils/bound-one-way';
 import imageManager from 'ghost/utils/ed-image-manager';
-import exifFormatter from 'ghost/utils/exif-formatter';
+import {formatExifForOutput, getGetDecimalLocation} from 'ghost/utils/exif-formatter';
 
-const {Mixin, RSVP, computed, inject, observer, run} = Ember;
+const {Mixin, RSVP, computed, inject, observer, run, guidFor} = Ember;
 const {alias} = computed;
 
 // this array will hold properties we need to watch
@@ -251,9 +251,24 @@ export default Mixin.create({
     },
 
     _insertExif(editor, exifData, isPortrait) {
-        let exifString = exifFormatter(exifData, isPortrait);
+        let exifString = formatExifForOutput(exifData, isPortrait);
         let insertionPoint = editor.getValue().length;
         editor.replaceSelection(exifString, insertionPoint);
+    },
+
+    _saveGeoTag(exif) {
+        let tagToAdd = this.get('store').createRecord('tag', {
+            name: getGetDecimalLocation(exif.gps)
+        });
+
+        // we need to set a UUID so that selectize has a unique value
+        // it will be ignored when sent to the server
+        tagToAdd.set('uuid', guidFor(tagToAdd));
+
+        // push tag onto post relationship
+        if (tagToAdd) {
+            this.get('model.tags').insertAt(0, tagToAdd);
+        }
     },
 
     actions: {
@@ -383,6 +398,7 @@ export default Mixin.create({
                 editor.replaceSelection(resultSrc, replacement.start, replacement.end, cursorPosition);
 
                 this._insertExif(editor, result.meta, result.isPortrait);
+                this._saveGeoTag(result.meta);
             }
         },
 
