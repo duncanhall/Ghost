@@ -250,8 +250,8 @@ export default Mixin.create({
         notifications.showAlert(message, {type: 'error', delayed: delay, key: 'post.save'});
     },
 
-    _insertExif(editor, exifData) {
-        let exifString = exifFormatter(exifData);
+    _insertExif(editor, exifData, isPortrait) {
+        let exifString = exifFormatter(exifData, isPortrait);
         let insertionPoint = editor.getValue().length;
         editor.replaceSelection(exifString, insertionPoint);
     },
@@ -381,7 +381,8 @@ export default Mixin.create({
                     resultSrc = `(${resultSrc})`;
                 }
                 editor.replaceSelection(resultSrc, replacement.start, replacement.end, cursorPosition);
-                this._insertExif(editor, result.meta);
+
+                this._insertExif(editor, result.meta, result.isPortrait);
             }
         },
 

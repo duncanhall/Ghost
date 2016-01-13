@@ -1,5 +1,7 @@
 var Promise = require('bluebird');
 var ExifImage = require('exif').ExifImage;
+var sizeOf = require('image-size');
+
 
 function postProcessImage (image) {
     return new Promise(function (resolve, reject) {
@@ -8,9 +10,12 @@ function postProcessImage (image) {
                 if (error) {
                     reject(error.message);
                 } else {
-                    resolve({
-                        url: image.url,
-                        meta: exifData
+                    sizeOf(image.original, function (err, dimensions) {
+                        resolve({
+                            url: image.url,
+                            meta: exifData,
+                            isPortrait: dimensions.height > dimensions.width
+                        });
                     });
                 }
             });
