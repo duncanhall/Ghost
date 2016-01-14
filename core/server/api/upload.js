@@ -56,8 +56,6 @@ upload = {
             return Promise.reject(new errors.UnsupportedMediaTypeError('Please select a valid image.'));
         }
 
-        console.dir(options);
-
         filepath = options.uploadimage.path;
 
         var process = getImageProcessor(store);

@@ -26,6 +26,8 @@ var bodyParser      = require('body-parser'),
     themeHandler     = require('./theme-handler'),
     uncapitalise     = require('./uncapitalise'),
 
+    thumbnail       = require('quickthumb'),
+
     ClientPasswordStrategy  = require('passport-oauth2-client-password').Strategy,
     BearerStrategy          = require('passport-http-bearer').Strategy,
 
@@ -79,7 +81,11 @@ setupMiddleware = function setupMiddleware(blogApp, adminApp) {
 
     // Static assets
     blogApp.use('/shared', express.static(path.join(corePath, '/shared'), {maxAge: utils.ONE_HOUR_MS}));
-    blogApp.use('/content/images', storage.getStorage().serve());
+
+    // Replace default storage server with thumbnail server
+    //blogApp.use('/content/images', storage.getStorage().serve());
+    blogApp.use('/content/images', thumbnail.static(config.paths.imagesPath));
+
     blogApp.use('/public', express.static(path.join(corePath, '/built/public'), {maxAge: utils.ONE_YEAR_MS}));
 
     // First determine whether we're serving admin or theme content
