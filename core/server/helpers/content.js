@@ -13,22 +13,31 @@ var hbs             = require('express-hbs'),
     content;
 
 content = function (options) {
+
     var truncateOptions = (options || {}).hash || {};
     truncateOptions = _.pick(truncateOptions, ['words', 'characters']);
     _.keys(truncateOptions).map(function (key) {
         truncateOptions[key] = parseInt(truncateOptions[key], 10);
     });
 
+    var html = this.html;
+
+    console.dir(options);
+
+    if (options.hasOwnProperty('hash') && options.hash.thumbnail === 'true') {
+        html = html.replace('.jpg', '.jpg?dim=0x165');
+    }
+
     if (truncateOptions.hasOwnProperty('words') || truncateOptions.hasOwnProperty('characters')) {
         // Legacy function: {{content words="0"}} should return leading tags.
         if (truncateOptions.hasOwnProperty('words') && truncateOptions.words === 0) {
             return new hbs.handlebars.SafeString(
-                downzero(this.html)
+                downzero(html)
             );
         }
 
         return new hbs.handlebars.SafeString(
-            downsize(this.html, truncateOptions)
+            downsize(html, truncateOptions)
         );
     }
 
