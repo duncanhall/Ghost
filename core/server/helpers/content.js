@@ -21,9 +21,6 @@ content = function (options) {
     });
 
     var html = this.html;
-
-    console.dir(options);
-
     if (options.hasOwnProperty('hash') && options.hash.thumbnail === 'true') {
         html = html.replace('.jpg', '.jpg?dim=0x165');
     }
