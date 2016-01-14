@@ -49,6 +49,7 @@ Session.vim
 /content/themes/**/*
 /content/images/**/*
 !/content/themes/casper/**
+!/content/themes/ghost-photo-theme
 !/content/plugins/image_processors
 !/README.md
 
