@@ -72,3 +72,5 @@ config.js
 
 # Coverage reports
 coverage.html
+
+npm-shrinkwrap.json
