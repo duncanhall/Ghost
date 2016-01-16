@@ -2,8 +2,8 @@ function formatDegreesMinutesSeconds (components, direction) {
     return `${components[0]}° ${components[1]}′ ${components[2]}″ ${direction}`;
 }
 
-function formatTimestamp (time) {
-    return new Date(time.split(' ').reduce((d, t) => `${d.replace(/\:/g, '-')} ${t}`)).toLocaleDateString('en-GB');
+function formatTimestamp (exif) {
+    return getTakenDateFromExif(exif).toLocaleDateString('en-GB');
 }
 
 function getExifTable (exif, lat, long, date, isPortrait) {
@@ -42,10 +42,14 @@ function getExifTable (exif, lat, long, date, isPortrait) {
 </table>`;
 }
 
+export function getTakenDateFromExif (exif) {
+    return new Date(exif.exif.DateTimeOriginal.split(' ').reduce((d, t) => `${d.replace(/\:/g, '-')} ${t}`));
+}
+
 export function formatExifForOutput (exif, isPortrait) {
     let latitude = formatDegreesMinutesSeconds(exif.gps.GPSLatitude, exif.gps.GPSLatitudeRef);
     let longitude = formatDegreesMinutesSeconds(exif.gps.GPSLongitude, exif.gps.GPSLongitudeRef);
-    let date = formatTimestamp(exif.exif.DateTimeOriginal);
+    let date = formatTimestamp(exif);
     return getExifTable(exif, latitude, longitude, date, isPortrait);
 }
 

@@ -2,7 +2,7 @@ import Ember from 'ember';
 import PostModel from 'ghost/models/post';
 import boundOneWay from 'ghost/utils/bound-one-way';
 import imageManager from 'ghost/utils/ed-image-manager';
-import {formatExifForOutput, getGetDecimalLocation} from 'ghost/utils/exif-formatter';
+import {formatExifForOutput, getGetDecimalLocation, getTakenDateFromExif} from 'ghost/utils/exif-formatter';
 
 const {Mixin, RSVP, computed, inject, observer, run, guidFor} = Ember;
 const {alias} = computed;
@@ -271,6 +271,28 @@ export default Mixin.create({
         }
     },
 
+    _createMetaDescription(exif) {
+        let dateTaken = getTakenDateFromExif(exif);
+        let dateFormat = dateTaken.toLocaleString('en-GB', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+        let metaDescription = `Photo of the Barbican taken on ${dateFormat}. Includes exif and geo-tag information.`;
+
+        let property = 'meta_description';
+        let model = this.get('model');
+        let currentDescription = model.get(property) || '';
+
+        // Only update if the description has changed
+        if (currentDescription === metaDescription) {
+            return;
+        }
+        model.set(property, metaDescription);
+        // If this is a new post.  Don't save the model.  Defer the save
+        // to the user pressing the save button
+        if (model.get('isNew')) {
+            return;
+        }
+        model.save();
+    },
+
     actions: {
         save(options) {
             let status;
@@ -399,6 +421,7 @@ export default Mixin.create({
 
                 this._insertExif(editor, result.meta, result.isPortrait);
                 this._saveGeoTag(result.meta);
+                this._createMetaDescription(result.meta);
             }
         },
 
