@@ -64,7 +64,7 @@ function getImage(props, context, contextObject, data) {
         props.image = config.urlFor('image', {image:src}, true);
         return;
     }
-    
+
     props.image = imageHelper.call(contextObject, {hash: {absolute: true}});
 
     if (context === 'post' && contextObject.author) {

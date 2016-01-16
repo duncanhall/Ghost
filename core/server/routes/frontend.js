@@ -85,6 +85,11 @@ frontendRoutes = function frontendRoutes(middleware) {
     indexRouter.use(rssRouter);
 
     // Tags
+    tagRouter.route('*').get(function redirect(req, res) {
+        redirect301(res, '/');
+    });
+
+    /*
     tagRouter.route('/').get(frontend.tag);
     tagRouter.route('/' + routeKeywords.page + '/:page/').get(frontend.tag);
     tagRouter.route('/edit?').get(function redirect(req, res) {
@@ -92,8 +97,13 @@ frontendRoutes = function frontendRoutes(middleware) {
     });
     tagRouter.param('page', handlePageParam);
     tagRouter.use(rssRouter);
+    */
 
     // Authors
+    authorRouter.route('*').get(function redirect(req, res) {
+        redirect301(res, '/');
+    });
+    /*
     authorRouter.route('/').get(frontend.author);
     authorRouter.route('/edit?').get(function redirect(req, res) {
         res.redirect(subdir + '/ghost/team/' + req.params.slug + '/');
@@ -101,6 +111,7 @@ frontendRoutes = function frontendRoutes(middleware) {
     authorRouter.route('/' + routeKeywords.page + '/:page/').get(frontend.author);
     authorRouter.param('page', handlePageParam);
     authorRouter.use(rssRouter);
+    */
 
     // Mount the Routers
     router.use('/' + routeKeywords.private + '/', privateRouter);
