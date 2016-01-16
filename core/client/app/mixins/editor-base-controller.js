@@ -316,7 +316,7 @@ export default Mixin.create({
 
             // Set a default title
             if (!this.get('model.titleScratch').trim()) {
-                this.set('model.titleScratch', '(Untitled)');
+                this.set('model.titleScratch', 'Image');
             }
 
             this.set('model.title', this.get('model.titleScratch'));
