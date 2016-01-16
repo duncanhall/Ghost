@@ -61,7 +61,7 @@ function getImage(props, context, contextObject, data) {
         var imgContainer = content.call(data.post, {hash: {words: '0'}});
         var $ = cheerio.load(String(imgContainer));
         var src = $('img').attr('src');
-        props.image = config.urlFor('image', {image:src}, true);
+        props.image = String(config.urlFor('image', {image:src}, true)) + '?dim=500';
         return;
     }
 
