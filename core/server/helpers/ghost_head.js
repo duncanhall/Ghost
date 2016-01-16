@@ -10,6 +10,7 @@ var hbs             = require('express-hbs'),
     moment          = require('moment'),
     _               = require('lodash'),
     Promise         = require('bluebird'),
+    cheerio         = require('cheerio'),
 
     config          = require('../config'),
     filters         = require('../filters'),
@@ -20,6 +21,7 @@ var hbs             = require('express-hbs'),
     meta_description    = require('./meta_description'),
     meta_title          = require('./meta_title'),
     excerpt             = require('./excerpt'),
+    content             = require('./content'),
     tagsHelper          = require('./tags'),
     imageHelper         = require('./image'),
     labs                = require('../utils/labs'),
@@ -50,11 +52,19 @@ function writeMetaTag(property, content, type) {
     return '<meta ' + type + '="' + property + '" content="' + content + '" />';
 }
 
-function getImage(props, context, contextObject) {
+function getImage(props, context, contextObject, data) {
     if (context === 'home' || context === 'author') {
         contextObject.image = contextObject.cover;
     }
 
+    if (data && data.post) {
+        var imgContainer = content.call(data.post, {hash: {words: '0'}});
+        var $ = cheerio.load(String(imgContainer));
+        var src = $('img').attr('src');
+        props.image = config.urlFor('image', {image:src}, true);
+        return;
+    }
+    
     props.image = imageHelper.call(contextObject, {hash: {absolute: true}});
 
     if (context === 'post' && contextObject.author) {
@@ -317,7 +327,7 @@ ghost_head = function (options) {
     props.meta_description = meta_description.call(self, options);
     props.meta_title = meta_title.call(self, options);
     props.client = getClient();
-    getImage(props, context, contextObject);
+    getImage(props, context, contextObject, self);
 
     // Resolves promises then push pushes meta data into ghost_head
     return Promise.props(props).then(function (results) {
