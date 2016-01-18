@@ -273,24 +273,27 @@ export default Mixin.create({
 
     _createMetaDescription(exif) {
         let dateTaken = getTakenDateFromExif(exif);
-        let dateFormat = dateTaken.toLocaleString('en-GB', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
-        let metaDescription = `Photo of the Barbican taken on ${dateFormat}. Includes exif and geo-tag information.`;
-
-        let property = 'meta_description';
         let model = this.get('model');
-        let currentDescription = model.get(property) || '';
+        let dateFormat = dateTaken.toLocaleString('en-GB', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+        let metaDescription = `Photo of the Barbican taken on ${dateFormat}.`;
+        let metaTitle = 'barbican.photo';
 
-        // Only update if the description has changed
-        if (currentDescription === metaDescription) {
-            return;
-        }
-        model.set(property, metaDescription);
-        // If this is a new post.  Don't save the model.  Defer the save
-        // to the user pressing the save button
+        this._updateMeta(model, 'published_at', dateTaken.getTime());
+        this._updateMeta(model, 'meta_description', metaDescription);
+        this._updateMeta(model, 'meta_title', metaTitle);
+
         if (model.get('isNew')) {
             return;
         }
         model.save();
+    },
+
+    _updateMeta(model, property, value) {
+        let currentValue = model.get(property) || '';
+        if (currentValue === value) {
+            return;
+        }
+        model.set(property, value);
     },
 
     actions: {
