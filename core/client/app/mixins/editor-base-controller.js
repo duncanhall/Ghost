@@ -290,7 +290,7 @@ export default Mixin.create({
         let dateTaken = getTakenDateFromExif(exif);
         let model = this.get('model');
         let dateFormat = dateTaken.toLocaleString('en-GB', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
-        let metaDescription = `Photo of the Barbican taken on ${dateFormat}.`;
+        let metaDescription = `Photo taken in the Barbican Estate on ${dateFormat}.`;
 
         let uniqueSlug = this.get('model.slug');
         let postNumber = 1;
