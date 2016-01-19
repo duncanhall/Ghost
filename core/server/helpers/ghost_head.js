@@ -161,6 +161,7 @@ function getStructuredData(metaData) {
         'og:description': metaData.metaDescription,
         'og:url': metaData.canonicalUrl,
         'og:image': metaData.coverImage,
+        'fb:app_id': metaData.appID,
         'article:published_time': metaData.publishedDate,
         'article:modified_time': metaData.modifiedDate,
         'article:tag': metaData.tags,
@@ -246,7 +247,8 @@ function getHomeSchema(metaData) {
         publisher: metaData.title,
         url: metaData.url,
         image: metaData.coverImage,
-        description: metaData.metaDescription
+        description: metaData.metaDescription,
+        appID: '943233365753250'
     };
 
     return trimSchema(schema);
