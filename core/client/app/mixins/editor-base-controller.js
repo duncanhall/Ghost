@@ -271,6 +271,21 @@ export default Mixin.create({
         }
     },
 
+    _tagAsPortrait() {
+        let tagToAdd = this.get('store').createRecord('tag', {
+            name: 'portrait'
+        });
+
+        // we need to set a UUID so that selectize has a unique value
+        // it will be ignored when sent to the server
+        tagToAdd.set('uuid', guidFor(tagToAdd));
+
+        // push tag onto post relationship
+        if (tagToAdd) {
+            this.get('model.tags').insertAt(1, tagToAdd);
+        }
+    },
+
     _createMetaDescription(exif) {
         let dateTaken = getTakenDateFromExif(exif);
         let model = this.get('model');
@@ -424,6 +439,10 @@ export default Mixin.create({
 
                 this._insertExif(editor, result.meta, result.isPortrait);
                 this._saveGeoTag(result.meta);
+                if (result.isPortrait) {
+                    this._tagAsPortrait();
+                }
+
                 this._createMetaDescription(result.meta);
             }
         },

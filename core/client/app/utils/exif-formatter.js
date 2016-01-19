@@ -23,7 +23,7 @@ function getExifTable (exif, lat, long, date, isPortrait) {
         <td>F Number:</td><td>${exif.exif.FNumber}</td>
     </tr>
 </table>
-<table class="portrait">
+<table class="${className}">
     <tr>
         <td>Camera:</td><td>${exif.image.Make} ${exif.image.Model}</td>
     </tr>
