@@ -247,8 +247,7 @@ function getHomeSchema(metaData) {
         publisher: metaData.title,
         url: metaData.url,
         image: metaData.coverImage,
-        description: metaData.metaDescription,
-        appID: '943233365753250'
+        description: metaData.metaDescription
     };
 
     return trimSchema(schema);
@@ -356,6 +355,11 @@ ghost_head = function (options) {
             // Test to see if we are on a post page and that Structured data has not been disabled in config.js
             if (context !== 'paged' && context !== 'page' && useStructuredData) {
                 // Create context driven OpenGraph and Twitter meta data
+
+                if (context === 'home') {
+                    metaData.appID = '943233365753250';
+                }
+
                 structuredData = getStructuredData(metaData);
                 // Create context driven JSONLD object
                 schema = chooseSchema(metaData, context, self);
