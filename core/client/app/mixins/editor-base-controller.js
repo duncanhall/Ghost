@@ -291,7 +291,13 @@ export default Mixin.create({
         let model = this.get('model');
         let dateFormat = dateTaken.toLocaleString('en-GB', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
         let metaDescription = `Photo of the Barbican taken on ${dateFormat}.`;
-        let metaTitle = 'barbican.photo';
+
+        let uniqueSlug = this.get('model.slug');
+        let postNumber = 1;
+        if (uniqueSlug && uniqueSlug.split('-').length === 2) {
+            postNumber = uniqueSlug.split('-')[1];
+        }
+        let metaTitle = `barbican.photo #${postNumber}`;
 
         this._updateMeta(model, 'published_at', dateTaken.getTime());
         this._updateMeta(model, 'meta_description', metaDescription);
@@ -371,7 +377,8 @@ export default Mixin.create({
                 psmController.generateAndSetSlug('model.slug');
             }
 
-            promise = RSVP.resolve(psmController.get('lastPromise')).then(() => {
+            promise = RSVP.resolve(psmController.get('lastPromise')).then((slug) => {
+
                 return this.get('model').save(options).then((model) => {
                     if (!options.silent) {
                         this.showSaveNotification(prevStatus, model.get('status'), isNew ? true : false);
